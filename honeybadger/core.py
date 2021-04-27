@@ -21,10 +21,10 @@ class Honeybadger(object):
 
     def _send_notice(self, exception, exc_traceback=None, context={}):
         payload = create_payload(exception, exc_traceback, config=self.config, context=context)
-        if self.config.is_dev() and not self.config.force_report_data:
-            fake_connection.send_notice(self.config, payload)
-        else:
-            connection.send_notice(self.config, payload)
+        # if self.config.is_dev() and not self.config.force_report_data:
+        #     fake_connection.send_notice(self.config, payload)
+        # else:
+        connection.send_notice(self.config, payload)
 
     def _get_context(self):
         return getattr(self.thread_local, 'context', {})
@@ -62,6 +62,9 @@ class Honeybadger(object):
         
         if self.config.is_aws_lambda_environment:
             default_plugin_manager.register(contrib.AWSLambdaPlugin())
+
+        elif self.config.is_celery_task:
+            default_plugin_manager.register(contrib.CeleryPlugin())
 
     def set_context(self, **kwargs):
         # This operation is an update, not a set!

@@ -1,4 +1,5 @@
 import os
+import sys
 import socket
 from six.moves import zip
 from six import iteritems
@@ -71,3 +72,12 @@ class Configuration(object):
         :rtype: bool
         """
         return os.environ.get("AWS_LAMBDA_FUNCTION_NAME") is not  None
+
+    @property
+    def is_celery_task(self):
+        """
+        Checks if the code being executed is a celery task
+        """
+        return sys.argv and sys.argv[0].endswith('celery') and 'worker' in sys.argv
+
+    #TODO: Make all  environment detection static methods in their individual plugins
